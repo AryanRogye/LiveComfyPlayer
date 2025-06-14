@@ -17,9 +17,10 @@ final class AuthManager : ObservableObject {
     @Published internal var fullName: String? = nil
     @Published internal var email: String?
     
+    
     init() {
         getUserAuthState()
-    }
+    }    
 }
 
 extension AuthManager {

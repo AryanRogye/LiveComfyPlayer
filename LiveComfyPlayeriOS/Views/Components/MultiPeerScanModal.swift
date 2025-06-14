@@ -25,13 +25,11 @@ struct MultiPeerScanModal: View {
         .onAppear {
             mpManager.startBrowsing()
         }
-        .onDisappear {
-            mpManager.stopBrowsing()
-        }
     }
     
     private var closeButton: some View {
         Button(action: {
+            mpManager.stopBrowsing()
             isScanning = false
         }) {
             Image(systemName: "xmark")

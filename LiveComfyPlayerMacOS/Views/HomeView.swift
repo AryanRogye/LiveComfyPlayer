@@ -13,7 +13,6 @@ struct HomeView: View {
     
     
     // MARK: -  Observed Objects
-    @ObservedObject private var mpManager: MultiPeerManager = .shared
     @ObservedObject private var sessionManager: SessionManager = .shared
     @ObservedObject private var navigationManager: NavigationManager = .shared
     
@@ -46,14 +45,6 @@ struct HomeView: View {
                 }
             }
         }
-        //        .onChange(of: showAddButton) { _, newValue in
-        //            /// Wanna Make the Device Discoverable for the iOS version
-        //            if newValue {
-        //                mpManager.start()
-        //            } else {
-        //                mpManager.stop()
-        //            }
-        //        }
     }
     
     // MARK: - ADD Section

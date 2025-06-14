@@ -18,6 +18,7 @@ struct HomeView: View {
         .sheet(isPresented: $isScanning) {
             NavigationStack {
                 MultiPeerScanModal(isScanning: $isScanning)
+                    .interactiveDismissDisabled(true)
             }
         }
         .toolbar {
