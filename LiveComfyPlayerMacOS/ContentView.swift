@@ -10,40 +10,35 @@ import AuthenticationServices
 
 struct ContentView: View {
     
-    enum Tab: String, CaseIterable, Hashable {
-        case home = "Home"
-        case settings = "Settings"
-        
-        var icon: String {
-            switch self {
-            case .home: return "house"
-            case .settings: return "gear"
-            }
-        }
-    }
-    
-    @State private var selectedTab: Tab? = .home
+    @ObservedObject private var navigationManager = NavigationManager.shared
     @ObservedObject private var authManager = AuthManager.shared
+    @ObservedObject private var sessionManager = SessionManager.shared
+    
     @State private var showSignInSheet: Bool = true
     
     var body: some View {
         // Constrained panel
         ZStack {
-            NavigationSplitView {
-                List(selection: $selectedTab) {
-                    ForEach(Tab.allCases, id: \.self) { tab in
-                        Text(tab.rawValue)
+            NavigationStack {
+                if let id = navigationManager.activeSessionID, let index = sessionManager.sessions.firstIndex(where: { $0.id == id }) {
+                    SessionView(session: $sessionManager.sessions[index])
+                } else {
+                    NavigationSplitView {
+                        List(selection: $navigationManager.selectedTab) {
+                            ForEach(NavigationManager.Tab.allCases, id: \.self) { tab in
+                                Label(tab.rawValue, systemImage: tab.icon)
+                            }
+                        }
+                    } detail: {
+                        switch navigationManager.selectedTab {
+                        case .home: HomeView()
+                        case .settings: SettingsView()
+                        case .none: Text("Select a tab")
+                        }
                     }
-                }
-                
-            } detail: {
-                switch selectedTab {
-                case .home: HomeView()
-                case .settings: SettingsView()
-                case .none: Text("Select a tab")
+                    .navigationSplitViewStyle(.prominentDetail)
                 }
             }
-            .navigationSplitViewStyle(.prominentDetail)
         }
         .onChange(of: authManager.isUserSignedIn) { _, newValue in
             showSignInSheet = !newValue
