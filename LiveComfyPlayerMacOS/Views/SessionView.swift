@@ -19,11 +19,15 @@ struct SessionView: View {
     @State private var beginMultiPeerSession: Bool = false
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             title
+            
+            Divider()
+                .padding(.horizontal, 8)
             
             Spacer()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onDisappear {
             /// Stop the MultiPeer session when the view disappears
             mpManager.stop()
@@ -81,6 +85,17 @@ struct SessionView: View {
                 .font(.largeTitle)
                 .padding()
             Spacer()
+            
+            if mpManager.verifiedPeers.count > 0 {
+                Text("Verified Users: \(mpManager.verifiedPeers.count)")
+                    .font(.caption)
+            }
         }
-    }    
+        .padding()
+    }
+}
+
+
+#Preview {
+    SessionView(session: .constant(Session(name: "hello", videoPaths: [])))
 }

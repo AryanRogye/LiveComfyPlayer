@@ -10,6 +10,8 @@ import SwiftUI
 
 struct SessionView: View {
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     var peer: MCPeerID
     var sessionKey: String
     
@@ -17,18 +19,54 @@ struct SessionView: View {
     @ObservedObject private var mpManager: MultiPeerManager = .shared
 
     var body: some View {
-        VStack {
-            Text("Session View")
+        ZStack {
+            colorScheme == .dark
+                ? Color(red: 18/255, green: 18/255, blue: 18/255).ignoresSafeArea()
+                : Color.white.ignoresSafeArea()
             
-            Spacer()
-            
-            Button(action: {
-                mpManager.stopBrowsing()
-                globalOverlayManager.clear()
-            }) {
-                Image(systemName: "xmark")
-                    .foregroundColor(.primary)
+            VStack {
+                title
+                ScrollView {
+                    Text("Content Goes Here")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+    }
+    
+    private var close: some View {
+        Button(action: {
+            mpManager.stopBrowsing()
+            globalOverlayManager.clear()
+        }) {
+            Image(systemName: "xmark")
+                .foregroundColor(.primary)
+        }
+    }
+    
+    private var title: some View {
+        HStack {
+            VStack {
+                HStack {
+                    Text(peer.displayName)
+                        .font(.title3)
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                }
+                
+                HStack {
+                    Text("Key: \(sessionKey)")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+            }
+            
+            close
+        }
+        .padding()
     }
 }
