@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import CryptoKit
 
 struct SessionView: View {
     
@@ -15,17 +14,26 @@ struct SessionView: View {
     @ObservedObject private var navigationManager = NavigationManager.shared
     
     @Binding var session: Session
-    
     @State private var beginMultiPeerSession: Bool = false
+    @State private var showVerifiedUsers = false
     
+    @State private var topHeight: CGFloat = 200
+
     var body: some View {
         VStack(spacing: 0) {
             title
             
-            Divider()
-                .padding(.horizontal, 8)
-            
-            Spacer()
+            GeometryReader { geometry in
+                VStack(spacing: 0) {
+                    MediaBrowserView(session: $session)
+                        .frame(height: topHeight)
+                    
+                    draggableDivider(geometry: geometry)
+                    
+                    MediaTimelineView()
+                        .frame(maxHeight: .infinity)
+                }
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onDisappear {
@@ -44,6 +52,7 @@ struct SessionView: View {
         }
         
         .toolbar {
+            // MARK: - Room Key
             ToolbarItem(placement: .secondaryAction) {
                 if let key = mpManager.roomKey {
                     Text("Room Key: \(key)")
@@ -57,7 +66,7 @@ struct SessionView: View {
                         .padding(.horizontal)
                 }
             }
-            
+            // MARK: - Toggle MultiPeer Connectivity
             ToolbarItem(placement: .primaryAction) {
                 Button(action: {
                     beginMultiPeerSession.toggle()
@@ -67,6 +76,7 @@ struct SessionView: View {
                         .foregroundColor(.primary)
                 }
             }
+            // MARK: - Close
             ToolbarItem(placement: .navigation) {
                 Button(action: {
                     navigationManager.activeSessionID = nil
@@ -79,23 +89,106 @@ struct SessionView: View {
         }
     }
     
+    private func draggableDivider(geometry: GeometryProxy) -> some View {
+        Rectangle()
+            .fill(Color.gray.opacity(0.4))
+            .frame(height: 2)
+            .gesture(
+                DragGesture(minimumDistance: 5)
+                    .onChanged { value in
+                        let newHeight = topHeight + value.translation.height
+                        if newHeight > 100 && newHeight < geometry.size.height - 100 {
+                            topHeight = newHeight
+                        }
+                    }
+            )
+            .background(Color.clear)
+#if os(macOS)
+            .onHover { hovering in
+                if hovering {
+                    NSCursor.resizeUpDown.push()
+                } else {
+                    NSCursor.pop()
+                }
+            }
+#elseif os(iOS)
+            .hoverEffect(.highlight) // Optional subtle feedback on iPad with trackpad
+#endif
+    }
+    
+    // MARK: - Title
     private var title: some View {
-        HStack {
-            Text("\(session.name)")
-                .font(.largeTitle)
-                .padding()
-            Spacer()
+        VStack(spacing: 0) {
+            HStack {
+                Text("\(session.name)")
+                    .font(.title3)
+                    .padding([.horizontal])
+                    .padding([.top, .bottom], 5)
+                Spacer()
+            }
             
             if mpManager.verifiedPeers.count > 0 {
-                Text("Verified Users: \(mpManager.verifiedPeers.count)")
-                    .font(.caption)
+                /// Show The Name In A DropDown
+                verifiedUsersDropdown
+                    .padding(.bottom, 2)
+            }
+
+            Divider()
+                .padding(.horizontal, 8)
+
+        }
+        .padding(.horizontal)
+    }
+    
+#if os(macOS)
+    let backgroundColor = Color(NSColor.controlBackgroundColor)
+    let borderColor = Color(NSColor.separatorColor)
+#else
+    let backgroundColor = Color(UIColor.systemBackground)
+    let borderColor = Color(UIColor.separator)
+#endif
+    
+    // MARK: - Verified Users
+    private var verifiedUsersDropdown: some View {
+        DisclosureGroup(isExpanded: $showVerifiedUsers) {
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(mpManager.verifiedPeers, id: \.self) { peer in
+                    HStack {
+                        Text(peer.displayName)
+                            .font(.system(size: 11))
+                            .foregroundColor(.primary)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .contentShape(Rectangle())
+                    .onHover { isHovered in
+                        // Optional: Add hover effect if needed
+                    }
+                }
+            }
+            .background(backgroundColor)
+            .clipShape(RoundedRectangle(cornerRadius: 4))
+            .overlay(
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke(borderColor, lineWidth: 0.5)
+            )
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: "checkmark.seal.fill")
+                    .foregroundColor(.accentColor)
+                    .font(.system(size: 10))
+                Text("Verified (\(mpManager.verifiedPeers.count))")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(.primary)
             }
         }
-        .padding()
+        .accentColor(.primary)
+        .padding(.bottom, 5)
     }
 }
 
 
 #Preview {
-    SessionView(session: .constant(Session(name: "hello", videoPaths: [])))
+    SessionView(session: .constant(Session(name: "hello")))
 }

@@ -5,7 +5,11 @@
 //  Created by Aryan Rogye on 6/14/25.
 //
 
+#if os(macOS)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 
 final class SessionManager: ObservableObject {
@@ -25,6 +29,15 @@ final class SessionManager: ObservableObject {
     
     func removeSession(_ session: Session) {
         sessions.removeAll { $0.id == session.id }
+        saveSessions()
+    }
+    
+    func addVideoPath(_ path: URL, to session: Session) {
+        /// Find the index that holds the session
+        guard let index = sessions.firstIndex(where: { $0.id == session.id }) else { return }
+        /// Then add it to it
+        sessions[index].videoPaths.append(path)
+        /// Save it
         saveSessions()
     }
     
@@ -51,12 +64,23 @@ struct Session: Identifiable, Codable, Equatable, Hashable {
     let id: UUID
     var name: String
     var createdAt: Date
-    var videoPaths: [URL] // or your own `Video` model later
+    var videoPaths: [URL]
+    var timelinePaths: [URL]
     
     init(name: String, videoPaths: [URL] = []) {
         self.id = UUID()
         self.name = name
         self.createdAt = Date()
         self.videoPaths = videoPaths
+        self.timelinePaths = []
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        videoPaths = try container.decode([URL].self, forKey: .videoPaths)
+        timelinePaths = try container.decodeIfPresent([URL].self, forKey: .timelinePaths) ?? []
     }
 }

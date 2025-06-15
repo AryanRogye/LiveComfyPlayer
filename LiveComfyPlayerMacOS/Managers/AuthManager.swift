@@ -5,7 +5,12 @@
 //  Created by Aryan Rogye on 6/13/25.
 //
 
+#if os(macOS)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
+
 import AuthenticationServices
 
 @MainActor

@@ -6,5 +6,12 @@
 	<array>
 		<string>_livecomfy-vp._tcp</string>
 	</array>
+    
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>Used to find nearby devices for syncing videos between macOS and iOS</string>
+    
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>Used to discover nearby devices for syncing over Bluetooth</string>
+    
 </dict>
 </plist>

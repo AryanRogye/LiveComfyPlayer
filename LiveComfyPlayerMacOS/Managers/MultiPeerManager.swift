@@ -5,7 +5,12 @@
 //  Created by Aryan Rogye on 6/14/25.
 //
 
+#if os(macOS)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
+
 import MultipeerConnectivity
 import CryptoKit
 
