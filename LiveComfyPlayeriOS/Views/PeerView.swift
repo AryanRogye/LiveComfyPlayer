@@ -10,6 +10,7 @@ import MultipeerConnectivity
 
 struct PeerView: View {
     var peer: MCPeerID
+    @Binding var isScanning: Bool
     
     @ObservedObject private var mpManager: MultiPeerManager = .shared
     
@@ -19,6 +20,7 @@ struct PeerView: View {
     
     @State private var couldntSend: Bool = false
     @State private var authenticationVerified: Bool = false
+    @State private var verifiedKey = ""
     
     var body: some View {
         VStack {
@@ -26,6 +28,7 @@ struct PeerView: View {
             keyTextField
                 .disabled(!isConnected)
             
+            openSession
             Spacer()
         }
         .onAppear {
@@ -38,6 +41,19 @@ struct PeerView: View {
                 // Show an error alert if the key is invalid
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     isError = false
+                }
+            }
+        }
+    }
+    
+    private var openSession: some View {
+        VStack {
+            if authenticationVerified {
+                Button(action: {
+                    isScanning = false
+                    GlobalOverlayManager.shared.show(peer, sessionKey: verifiedKey)
+                }) {
+                    Text("Open Live Session")
                 }
             }
         }
@@ -101,6 +117,7 @@ struct PeerView: View {
                         if success {
                             couldntSend = false
                             authenticationVerified = true
+                            verifiedKey = key
                             key = ""
                         } else {
                             couldntSend = true

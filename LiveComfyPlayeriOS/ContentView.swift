@@ -16,10 +16,12 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             TabView {
-                HomeView()
-                    .tabItem {
-                        Label("Home", systemImage: "house")
-                    }
+                NavigationStack {
+                    HomeView()
+                }
+                .tabItem {
+                    Label("Home", systemImage: "house")
+                }
                 SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gear")

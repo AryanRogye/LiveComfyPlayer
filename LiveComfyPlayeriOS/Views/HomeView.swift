@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     
     @State private var isScanning = false
+    @StateObject private var overlay = GlobalOverlayManager.shared
     
     var body: some View {
         VStack {
@@ -18,6 +19,13 @@ struct HomeView: View {
         .sheet(isPresented: $isScanning) {
             NavigationStack {
                 MultiPeerScanModal(isScanning: $isScanning)
+                    .interactiveDismissDisabled(true)
+            }
+        }
+        
+        .fullScreenCover(isPresented: $overlay.showSessionView) {
+            if let peer = overlay.selectedPeer, let sessionKey = overlay.sessionKey {
+                SessionView(peer: peer, sessionKey: sessionKey)
                     .interactiveDismissDisabled(true)
             }
         }

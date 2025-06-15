@@ -16,7 +16,7 @@ struct MultiPeerScanModal: View {
         VStack {
             ScrollView {
                 ForEach(mpManager.discoveredPeers, id: \.self) { peer in
-                    DiscoveredPeerItem(peer: peer)
+                    DiscoveredPeerItem(peer: peer, isScanning: $isScanning)
                 }
             }
             Spacer()

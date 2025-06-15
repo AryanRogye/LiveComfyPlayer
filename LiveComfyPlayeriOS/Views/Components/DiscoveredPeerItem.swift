@@ -11,9 +11,10 @@ import MultipeerConnectivity
 struct DiscoveredPeerItem: View {
     
     var peer: MCPeerID
+    @Binding var isScanning: Bool
     
     var body: some View {
-        NavigationLink(destination: PeerView(peer: peer)) {
+        NavigationLink(destination: PeerView(peer: peer, isScanning: $isScanning)) {
             HStack {
                 Text(peer.displayName)
                     .font(.headline)

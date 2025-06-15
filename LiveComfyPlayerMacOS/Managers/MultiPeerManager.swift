@@ -170,11 +170,14 @@ extension MultiPeerManager: @preconcurrency MCSessionDelegate {
             case .notConnected:
                 print("❌ Disconnected from \(peerID.displayName)")
                 self.connectedPeers.removeAll { $0 == peerID }
+                self.verifiedPeers.removeAll { $0 == peerID }
             case .connecting:
                 print("🔄 Connecting to \(peerID.displayName)...")
             case .connected:
                 print("✅ Connected to \(peerID.displayName)")
-                self.connectedPeers.append(peerID)
+                if !self.connectedPeers.contains(peerID) {
+                    self.connectedPeers.append(peerID)
+                }
             @unknown default:
                 print("🌀 Unknown state from \(peerID.displayName)")
             }
