@@ -9,16 +9,17 @@
 /* Begin PBXFileReference section */
 		9B429DEC2DFD19A300CEE7D8 /* LiveComfyPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LiveComfyPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B429E002DFD19C300CEE7D8 /* LiveComfyPlayerMacOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LiveComfyPlayerMacOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		9B429FCF2DFD54F500CEE7D8 /* LiveComfyPlayeriOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LiveComfyPlayeriOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B429FCF2DFD54F500CEE7D8 /* LiveComfyPlayeriOSController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LiveComfyPlayeriOSController.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B70855B2E021C1F00D5A2EC /* LiveComfyPlayeriOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LiveComfyPlayeriOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		9B429FF12DFD644E00CEE7D8 /* Exceptions for "LiveComfyPlayeriOS" folder in "LiveComfyPlayeriOS" target */ = {
+		9B7085562E021BA100D5A2EC /* Exceptions for "LiveComfyPlayeriOSController" folder in "LiveComfyPlayeriOSController" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 9B429FCE2DFD54F500CEE7D8 /* LiveComfyPlayeriOS */;
+			target = 9B429FCE2DFD54F500CEE7D8 /* LiveComfyPlayeriOSController */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -28,11 +29,16 @@
 			path = LiveComfyPlayerMacOS;
 			sourceTree = "<group>";
 		};
-		9B429FD02DFD54F500CEE7D8 /* LiveComfyPlayeriOS */ = {
+		9B70850C2E021A6400D5A2EC /* LiveComfyPlayeriOSController */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				9B429FF12DFD644E00CEE7D8 /* Exceptions for "LiveComfyPlayeriOS" folder in "LiveComfyPlayeriOS" target */,
+				9B7085562E021BA100D5A2EC /* Exceptions for "LiveComfyPlayeriOSController" folder in "LiveComfyPlayeriOSController" target */,
 			);
+			path = LiveComfyPlayeriOSController;
+			sourceTree = "<group>";
+		};
+		9B70855C2E021C1F00D5A2EC /* LiveComfyPlayeriOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
 			path = LiveComfyPlayeriOS;
 			sourceTree = "<group>";
 		};
@@ -60,14 +66,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9B7085582E021C1F00D5A2EC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		9B429DE12DFD197A00CEE7D8 = {
 			isa = PBXGroup;
 			children = (
+				9B70850C2E021A6400D5A2EC /* LiveComfyPlayeriOSController */,
 				9B429E012DFD19C300CEE7D8 /* LiveComfyPlayerMacOS */,
-				9B429FD02DFD54F500CEE7D8 /* LiveComfyPlayeriOS */,
+				9B70855C2E021C1F00D5A2EC /* LiveComfyPlayeriOS */,
 				9B429DED2DFD19A300CEE7D8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -77,7 +91,8 @@
 			children = (
 				9B429DEC2DFD19A300CEE7D8 /* LiveComfyPlayer.app */,
 				9B429E002DFD19C300CEE7D8 /* LiveComfyPlayerMacOS.app */,
-				9B429FCF2DFD54F500CEE7D8 /* LiveComfyPlayeriOS.app */,
+				9B429FCF2DFD54F500CEE7D8 /* LiveComfyPlayeriOSController.app */,
+				9B70855B2E021C1F00D5A2EC /* LiveComfyPlayeriOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -126,9 +141,9 @@
 			productReference = 9B429E002DFD19C300CEE7D8 /* LiveComfyPlayerMacOS.app */;
 			productType = "com.apple.product-type.application";
 		};
-		9B429FCE2DFD54F500CEE7D8 /* LiveComfyPlayeriOS */ = {
+		9B429FCE2DFD54F500CEE7D8 /* LiveComfyPlayeriOSController */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9B429FDA2DFD54F600CEE7D8 /* Build configuration list for PBXNativeTarget "LiveComfyPlayeriOS" */;
+			buildConfigurationList = 9B429FDA2DFD54F600CEE7D8 /* Build configuration list for PBXNativeTarget "LiveComfyPlayeriOSController" */;
 			buildPhases = (
 				9B429FCB2DFD54F500CEE7D8 /* Sources */,
 				9B429FCC2DFD54F500CEE7D8 /* Frameworks */,
@@ -139,13 +154,35 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				9B429FD02DFD54F500CEE7D8 /* LiveComfyPlayeriOS */,
+				9B70850C2E021A6400D5A2EC /* LiveComfyPlayeriOSController */,
+			);
+			name = LiveComfyPlayeriOSController;
+			packageProductDependencies = (
+			);
+			productName = LiveComfyPlayeriOS;
+			productReference = 9B429FCF2DFD54F500CEE7D8 /* LiveComfyPlayeriOSController.app */;
+			productType = "com.apple.product-type.application";
+		};
+		9B70855A2E021C1F00D5A2EC /* LiveComfyPlayeriOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9B7085662E021C2000D5A2EC /* Build configuration list for PBXNativeTarget "LiveComfyPlayeriOS" */;
+			buildPhases = (
+				9B7085572E021C1F00D5A2EC /* Sources */,
+				9B7085582E021C1F00D5A2EC /* Frameworks */,
+				9B7085592E021C1F00D5A2EC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				9B70855C2E021C1F00D5A2EC /* LiveComfyPlayeriOS */,
 			);
 			name = LiveComfyPlayeriOS;
 			packageProductDependencies = (
 			);
 			productName = LiveComfyPlayeriOS;
-			productReference = 9B429FCF2DFD54F500CEE7D8 /* LiveComfyPlayeriOS.app */;
+			productReference = 9B70855B2E021C1F00D5A2EC /* LiveComfyPlayeriOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -167,6 +204,9 @@
 					9B429FCE2DFD54F500CEE7D8 = {
 						CreatedOnToolsVersion = 16.2;
 					};
+					9B70855A2E021C1F00D5A2EC = {
+						CreatedOnToolsVersion = 16.2;
+					};
 				};
 			};
 			buildConfigurationList = 9B429DE52DFD197A00CEE7D8 /* Build configuration list for PBXProject "LiveComfyPlayer" */;
@@ -185,7 +225,8 @@
 			targets = (
 				9B429DEB2DFD19A300CEE7D8 /* LiveComfyPlayer */,
 				9B429DFF2DFD19C300CEE7D8 /* LiveComfyPlayerMacOS */,
-				9B429FCE2DFD54F500CEE7D8 /* LiveComfyPlayeriOS */,
+				9B429FCE2DFD54F500CEE7D8 /* LiveComfyPlayeriOSController */,
+				9B70855A2E021C1F00D5A2EC /* LiveComfyPlayeriOS */,
 			);
 		};
 /* End PBXProject section */
@@ -212,6 +253,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9B7085592E021C1F00D5A2EC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -230,6 +278,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		9B429FCB2DFD54F500CEE7D8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B7085572E021C1F00D5A2EC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -616,7 +671,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = LiveComfyPlayeriOS/LiveComfyPlayeriOS.entitlements;
+				CODE_SIGN_ENTITLEMENTS = LiveComfyPlayeriOSController/LiveComfyPlayeriOSController.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -641,7 +696,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = LiveComfyPlayeriOS/Info.plist;
+				INFOPLIST_FILE = LiveComfyPlayeriOSController/Info.plist;
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app needs local network access to connect to your Mac.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -704,7 +759,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = LiveComfyPlayeriOS/LiveComfyPlayeriOS.entitlements;
+				CODE_SIGN_ENTITLEMENTS = LiveComfyPlayeriOSController/LiveComfyPlayeriOSController.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -723,7 +778,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = LiveComfyPlayeriOS/Info.plist;
+				INFOPLIST_FILE = LiveComfyPlayeriOSController/Info.plist;
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app needs local network access to connect to your Mac.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -731,6 +786,171 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aryanrogye.iOS.LiveComfyPlayeriOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		9B7085672E021C2000D5A2EC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = B9P888266K;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aryanrogye.iOS.LiveComfyPlayeriOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9B7085682E021C2000D5A2EC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = B9P888266K;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -780,11 +1000,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9B429FDA2DFD54F600CEE7D8 /* Build configuration list for PBXNativeTarget "LiveComfyPlayeriOS" */ = {
+		9B429FDA2DFD54F600CEE7D8 /* Build configuration list for PBXNativeTarget "LiveComfyPlayeriOSController" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9B429FDB2DFD54F600CEE7D8 /* Debug */,
 				9B429FDC2DFD54F600CEE7D8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9B7085662E021C2000D5A2EC /* Build configuration list for PBXNativeTarget "LiveComfyPlayeriOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9B7085672E021C2000D5A2EC /* Debug */,
+				9B7085682E021C2000D5A2EC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

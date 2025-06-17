@@ -5,68 +5,173 @@
 //  Created by Aryan Rogye on 6/14/25.
 //
 
-import MultipeerConnectivity
 import SwiftUI
 
 struct SessionView: View {
     
-    @Environment(\.colorScheme) private var colorScheme
-    
-    var peer: MCPeerID
-    var sessionKey: String
-    
-    @ObservedObject private var globalOverlayManager: GlobalOverlayManager = .shared
+    @ObservedObject private var authManager: AuthManager = .shared
     @ObservedObject private var mpManager: MultiPeerManager = .shared
+    @ObservedObject private var navigationManager = NavigationManager.shared
+    
+    @Binding var session: Session
+    @State private var beginMultiPeerSession: Bool = false
+    @State private var showVerifiedUsers = false
+    
+    @State private var topHeight: CGFloat = 200
 
     var body: some View {
-        ZStack {
-            colorScheme == .dark
-                ? Color(red: 18/255, green: 18/255, blue: 18/255).ignoresSafeArea()
-                : Color.white.ignoresSafeArea()
+        VStack(spacing: 0) {
+            title
             
-            VStack {
-                title
-                ScrollView {
-                    Text("Content Goes Here")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding()
+            GeometryReader { geometry in
+                VStack(spacing: 0) {
+                    MediaBrowserView(session: $session)
+                        .frame(height: topHeight)
+                    
+                    draggableDivider(geometry: geometry)
+                    
+                    MediaTimelineView(session: $session)
+                        .frame(maxHeight: .infinity)
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-    }
-    
-    private var close: some View {
-        Button(action: {
-            mpManager.stopBrowsing()
-            globalOverlayManager.clear()
-        }) {
-            Image(systemName: "xmark")
-                .foregroundColor(.primary)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onDisappear {
+            /// Stop the MultiPeer session when the view disappears
+            mpManager.stop()
         }
-    }
-    
-    private var title: some View {
-        HStack {
-            VStack {
-                HStack {
-                    Text(peer.displayName)
-                        .font(.title3)
-                        .foregroundColor(.primary)
-                    
-                    Spacer()
-                }
-                
-                HStack {
-                    Text("Key: \(sessionKey)")
+        .onChange(of: beginMultiPeerSession) { _, newValue in
+            /// Wanna Make the Device Discoverable for the iOS version
+            if newValue {
+                mpManager.start(session: session)
+                mpManager.generateRoomKey(session)
+            } else {
+                mpManager.stop()
+                mpManager.clearRoomKey()
+            }
+        }
+        
+        .toolbar {
+            // MARK: - Room Key
+            ToolbarItem(placement: .secondaryAction) {
+                if let key = mpManager.roomKey {
+                    Text("Room Key: \(key)")
                         .font(.headline)
                         .foregroundColor(.secondary)
-                    Spacer()
+                        .padding(.horizontal)
+                } else {
+                    Text("Please start the session to generate a room key")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal)
                 }
             }
-            
-            close
+            // MARK: - Toggle MultiPeer Connectivity
+            ToolbarItem(placement: .primaryAction) {
+                Button(action: {
+                    beginMultiPeerSession.toggle()
+                }) {
+                    Image(systemName: beginMultiPeerSession ? "stop.circle" : "play.circle")
+                        .font(.title2)
+                        .foregroundColor(.primary)
+                }
+            }
+            // MARK: - Close
+            ToolbarItem(placement: .navigation) {
+                Button(action: {
+                    navigationManager.activeSessionID = nil
+                    navigationManager.selectedTab = .home
+                }) {
+                    Image(systemName: "xmark")
+                        .foregroundColor(.primary)
+                }
+            }
         }
-        .padding()
     }
+    
+    private func draggableDivider(geometry: GeometryProxy) -> some View {
+        Rectangle()
+            .fill(Color.gray.opacity(0.4))
+            .frame(height: 2)
+            .gesture(
+                DragGesture(minimumDistance: 5)
+                    .onChanged { value in
+                        let newHeight = topHeight + value.translation.height
+                        if newHeight > 100 && newHeight < geometry.size.height - 100 {
+                            topHeight = newHeight
+                        }
+                    }
+            )
+    }
+    
+    // MARK: - Title
+    private var title: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text("\(session.name)")
+                    .font(.title3)
+                    .padding([.horizontal])
+                    .padding([.top, .bottom], 5)
+                Spacer()
+            }
+            
+            if mpManager.verifiedPeers.count > 0 {
+                /// Show The Name In A DropDown
+                verifiedUsersDropdown
+                    .padding(.bottom, 2)
+            }
+
+            Divider()
+                .padding(.horizontal, 8)
+
+        }
+        .padding(.horizontal)
+    }
+    
+    let backgroundColor = Color(UIColor.systemBackground)
+    let borderColor = Color(UIColor.separator)
+
+    // MARK: - Verified Users
+    private var verifiedUsersDropdown: some View {
+        DisclosureGroup(isExpanded: $showVerifiedUsers) {
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(mpManager.verifiedPeers, id: \.self) { peer in
+                    HStack {
+                        Text(peer.displayName)
+                            .font(.system(size: 11))
+                            .foregroundColor(.primary)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .contentShape(Rectangle())
+                    .onHover { isHovered in
+                        // Optional: Add hover effect if needed
+                    }
+                }
+            }
+            .background(backgroundColor)
+            .clipShape(RoundedRectangle(cornerRadius: 4))
+            .overlay(
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke(borderColor, lineWidth: 0.5)
+            )
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: "checkmark.seal.fill")
+                    .foregroundColor(.accentColor)
+                    .font(.system(size: 10))
+                Text("Verified (\(mpManager.verifiedPeers.count))")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(.primary)
+            }
+        }
+        .accentColor(.primary)
+        .padding(.bottom, 5)
+    }
+}
+
+
+#Preview {
+    SessionView(session: .constant(Session(name: "hello")))
 }

@@ -2,10 +2,10 @@
 //  AuthManager.swift
 //  LiveComfyPlayer
 //
-//  Created by Aryan Rogye on 6/13/25.
+//  Created by Aryan Rogye on 6/14/25.
 //
 
-import Foundation
+import UIKit
 import AuthenticationServices
 
 @MainActor
@@ -16,7 +16,6 @@ final class AuthManager : ObservableObject {
     @Published internal var userID: String?
     @Published internal var fullName: String? = nil
     @Published internal var email: String?
-    
     
     init() {
         getUserAuthState()
@@ -60,20 +59,17 @@ extension AuthManager {
                 DispatchQueue.main.async {
                     switch state {
                     case .revoked, .notFound:
-                        print("user is not signed in")
                         self.isUserSignedIn = false
                     case .authorized, .transferred:
-                        print("user is signed in")
                         self.isUserSignedIn = true
                     @unknown default:
-                        print("Unknown state: \(state)")
                         self.isUserSignedIn = false
                     }
                 }
             }
+            
         } else {
             DispatchQueue.main.async {
-                print("No user credentials found in UserDefaults")
                 self.isUserSignedIn = false
             }
         }
@@ -98,15 +94,9 @@ extension AuthManager {
         defaults.set(credential.user, forKey: "appleUserID")
         if let name = credential.fullName?.formatted() {
             defaults.set(name, forKey: "appleUserFullName")
-        } else {
-            defaults.set("Unknown", forKey: "appleUserFullName")
         }
         if let email = credential.email {
             defaults.set(email, forKey: "appleUserEmail")
-        } else {
-            defaults.set("Unavailable", forKey: "appleUserEmail")
         }
-        
-        print("Saved user credentials: \(credential.user)")
     }
 }

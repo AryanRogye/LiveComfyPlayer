@@ -7,6 +7,7 @@
 
 import Foundation
 import MultipeerConnectivity
+import CryptoKit
 
 struct PeerMessage: Codable {
     let type: PeerMessageType
@@ -24,94 +25,102 @@ enum PeerMessageType: String, Codable {
 final class MultiPeerManager: NSObject, ObservableObject {
     static let shared = MultiPeerManager()
     
-    private let myPeerID = MCPeerID(displayName: UIDevice.current.name)
+    private let authManager: AuthManager = .shared
+    
+    /// represents identity during the entire session
+    private var peerID: MCPeerID?
+    /// It's what iOS devices detect when scanning
+    private var advertiser: MCNearbyServiceAdvertiser?
+    /// It's where you receive messages
+    /// It keeps track of connected peers
+    /// It’s used in the invitationHandler when accepting a peer
     private var session: MCSession?
-    private var browser: MCNearbyServiceBrowser?
-    
-    @Published var discoveredPeers: [MCPeerID] = []
+    /// Connected peers list
     @Published var connectedPeers: [MCPeerID] = []
-    @Published var failedVerification: MCPeerID?
     
-    private var pendingConnection: (peer: MCPeerID, completion: (Bool) -> Void)?
-    private var keyResponseHandlers: [MCPeerID: (Bool) -> Void] = [:]
+    @Published var verifiedPeers: [MCPeerID] = []
     
-    public func startBrowsing() {
-        session = MCSession(peer: myPeerID, securityIdentity: nil, encryptionPreference: .required)
+    @Published public var roomKey: String?
+    
+    
+    public func start(session userSession: Session) {
+        print("Called MultiPeerManager.start()")
+        if self.peerID == nil {
+            var displayName = "\(authManager.fullName ?? "Unknown User") | \(userSession.name)"
+            /// Make Sure DisplayName doesnt exceed 76 Characters
+            if displayName.count > 76 { displayName = String(displayName.prefix(76)) }
+            self.peerID = MCPeerID(displayName: displayName)
+        }
+        guard let peerID = self.peerID else {
+            print("❌ Could not create peerID.")
+            return
+        }
+        
+        guard advertiser == nil else {
+            print("⚠️ Already advertising.")
+            return
+        }
+        
+        /// Create A Session
+        self.session = MCSession(
+            peer: peerID,
+            securityIdentity: nil,
+            encryptionPreference: .required
+        )
         session?.delegate = self
         
-        browser = MCNearbyServiceBrowser(peer: myPeerID, serviceType: "livecomfy-vp")
-        browser?.delegate = self
-        browser?.startBrowsingForPeers()
+        self.advertiser = MCNearbyServiceAdvertiser(
+            peer: peerID,
+            discoveryInfo: nil,
+            serviceType: "livecomfy-vp"
+        )
+        advertiser?.delegate = self
+        self.advertiser?.startAdvertisingPeer()
         
-        print("🔍 iOS is now browsing for peers.")
+        print("MultiPeerManager started with peer: \(peerID.displayName)")
     }
     
-    public func connect(to peer: MCPeerID, success: @escaping (Bool) -> Void) {
-        guard let session = session else {
-            success(false)
-            return
-        }
-        
-        pendingConnection = (peer, success)
-        browser?.invitePeer(peer, to: session, withContext: nil, timeout: 10)
-        print("📨 Sent invite to \(peer.displayName)")
-    }
-    
-    public func sendKey(_ key: String, to peer: MCPeerID, success: @escaping (Bool) -> Void) {
-        guard let _ = session else {
-            print("❌ Session is not initialized.")
-            success(false)
-            return
-        }
-        
-        guard connectedPeers.contains(peer) else {
-            print("❌ Peer is not connected.")
-            success(false)
-            return
-        }
-        keyResponseHandlers[peer] = success
-        
-        self.send(.roomKey, payload: key, to: peer) { sent in
-            if !sent {
-                self.keyResponseHandlers.removeValue(forKey: peer)
-                success(false)
-            }
-        }
-    }
-    
-    public func stopBrowsing() {
-        browser?.stopBrowsingForPeers()
-        browser = nil
+    public func stop() {
         session?.disconnect()
+        advertiser?.stopAdvertisingPeer()
+        advertiser = nil
         session = nil
-        discoveredPeers.removeAll()
+        peerID = nil
         connectedPeers.removeAll()
+        print("MultiPeerManager stopped.")
     }
     
     internal func handleIncomingData(_ data: Data, from peer: MCPeerID) throws {
         let message = try JSONDecoder().decode(PeerMessage.self, from: data)
         
         switch message.type {
-        case .roomKey:          print("Received room key from \(peer.displayName): \(message.payload)")
-        case .roomKeyResponse:  handleRoomKeyResponse(message.payload, from: peer)
+        case .roomKey:          handleRoomKeyResponse(message.payload, from: peer)
+        case .roomKeyResponse:  print("Received room key response from \(peer.displayName): \(message.payload)")
         case .status:           print("Received status from \(peer.displayName): \(message.payload)")
         case .unknown:          print("Received unknown message type from \(peer.displayName): \(message.payload)")
         }
     }
     
     public func handleRoomKeyResponse(_ response: String, from peer: MCPeerID) {
-        print("Recieved Response \(response)")
-        let isValid = response == "1"
-        if let callback = keyResponseHandlers.removeValue(forKey: peer) {
-            callback(isValid)
+        // Handle the room key response from the peer
+        print("Received room key response from \(peer.displayName): \(response)")
+        
+        // You can add logic here to verify the response or update UI
+        let answer = response == roomKey ? "1" : "0"
+        send(.roomKeyResponse, payload: answer, to: peer) { success in
+            if success {
+                print("✅ Successfully sent room key response to \(peer.displayName)")
+            } else {
+                print("❌ Failed to send room key response to \(peer.displayName)")
+            }
         }
         
-        if isValid {
-            
-        } else {
-            print("❌ Room key rejected by macOS from \(peer.displayName)")
+        if response == roomKey {
             DispatchQueue.main.async {
-                self.failedVerification = peer
+                if !self.verifiedPeers.contains(peer) {
+                    self.verifiedPeers.append(peer)
+                    print("✅ Peer \(peer.displayName) verified with room key.")
+                }
             }
         }
     }
@@ -142,45 +151,35 @@ final class MultiPeerManager: NSObject, ObservableObject {
     }
 }
 
-extension MultiPeerManager: @preconcurrency MCNearbyServiceBrowserDelegate {
-    func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String : String]?) {
-        print("📡 Found peer: \(peerID.displayName)")
-        
-        if !discoveredPeers.contains(peerID) {
-            discoveredPeers.append(peerID)
-        }
+extension MultiPeerManager: MCNearbyServiceAdvertiserDelegate {
+    func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
+        // Automatically accept invitations from peers
+        invitationHandler(true, session)
     }
     
-    func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
-        print("💨 Lost peer: \(peerID.displayName)")
-        discoveredPeers.removeAll { $0 == peerID }
+    func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didNotStartAdvertisingPeer error: Error) {
+        print("Failed to start advertising peer: \(error.localizedDescription)")
     }
 }
 
 extension MultiPeerManager: @preconcurrency MCSessionDelegate {
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
-        print("🔄 Peer \(peerID.displayName) changed state: \(state.rawValue)")
-        
+        // 🧠 handle connect/disconnect
         DispatchQueue.main.async {
             switch state {
+            case .notConnected:
+                print("❌ Disconnected from \(peerID.displayName)")
+                self.connectedPeers.removeAll { $0 == peerID }
+                self.verifiedPeers.removeAll { $0 == peerID }
+            case .connecting:
+                print("🔄 Connecting to \(peerID.displayName)...")
             case .connected:
-                if self.connectedPeers.contains(peerID) == false {
+                print("✅ Connected to \(peerID.displayName)")
+                if !self.connectedPeers.contains(peerID) {
                     self.connectedPeers.append(peerID)
                 }
-                if self.pendingConnection?.peer == peerID {
-                    self.pendingConnection?.completion(true)
-                    self.pendingConnection = nil
-                }
-                
-            case .notConnected:
-                self.connectedPeers.removeAll { $0 == peerID }
-                if self.pendingConnection?.peer == peerID {
-                    self.pendingConnection?.completion(false)
-                    self.pendingConnection = nil
-                }
-                
-            default:
-                break
+            @unknown default:
+                print("🌀 Unknown state from \(peerID.displayName)")
             }
         }
     }
@@ -195,14 +194,32 @@ extension MultiPeerManager: @preconcurrency MCSessionDelegate {
     }
     
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
-        
+        // Optional: For live media streams
     }
     
     func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
-        
+        // Optional: For file transfers
     }
     
-    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: (any Error)?) {
+    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
+        // Optional: File received
+    }
+}
+
+
+extension MultiPeerManager {
+    public func generateRoomKey(_ session: Session) {
+        let input = "\(session.name)\(Date().timeIntervalSince1970)"
+        let hash = SHA256.hash(data: Data(input.utf8))
         
+        // Take first 4 bytes and convert to UInt32
+        let keyBytes = hash.prefix(4)
+        let keyInt = keyBytes.reduce(0) { ($0 << 8) | UInt32($1) }
+        
+        // Limit it to a 6-digit number
+        roomKey = String(keyInt % 1_000_000)
+    }
+    public func clearRoomKey() {
+        roomKey = nil
     }
 }
