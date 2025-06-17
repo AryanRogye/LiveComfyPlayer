@@ -83,9 +83,9 @@ struct MediaBrowserView: View {
         }
         .onAppear {
             // We Wanna load thumbnails for the
-            session.videoPaths.forEach({ video in
-                loadThumbnail(for: video) {
-                    video.stopAccessingSecurityScopedResource()
+            session.videoPaths.forEach({ clip in
+                loadThumbnail(for: clip.url) {
+                    clip.url.stopAccessingSecurityScopedResource()
                 }
             })
         }
@@ -105,7 +105,8 @@ struct MediaBrowserView: View {
                     // Ensure the import button is there so u can always add something
                     importMediaView(width: 60, height: 60, paddingTop: 10)
                     
-                    ForEach(session.videoPaths, id: \.self) { video in
+                    ForEach(session.videoPaths, id: \.self) { clip in
+                        let video = clip.url
                         ZStack {
                             if let thumbnail = thumbnails[video] {
                                 Image(nsImage: thumbnail)

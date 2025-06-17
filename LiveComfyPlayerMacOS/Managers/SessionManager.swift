@@ -31,8 +31,9 @@ final class SessionManager: ObservableObject {
     func addVideoPath(_ path: URL, to session: Session) {
         /// Find the index that holds the session
         guard let index = sessions.firstIndex(where: { $0.id == session.id }) else { return }
+        let clip = Clip(url: path)
         /// Then add it to it
-        sessions[index].videoPaths.append(path)
+        sessions[index].videoPaths.append(clip)
         /// Save it
         saveSessions()
     }
@@ -41,7 +42,7 @@ final class SessionManager: ObservableObject {
         /// Find the index that holds the session
         guard let index = sessions.firstIndex(where: { $0.id == session.id }) else { return }
         /// Then add it to the timelinePaths
-        let clip = TimelineClip(url: path)
+        let clip = Clip(url: path)
         /// Create a new TimelineClip and append it
         sessions[index].timelinePaths.append(clip)
         /// Save it
@@ -71,10 +72,10 @@ struct Session: Identifiable, Codable, Equatable, Hashable {
     let id: UUID
     var name: String
     var createdAt: Date
-    var videoPaths: [URL]
-    var timelinePaths: [TimelineClip]
+    var videoPaths: [Clip]
+    var timelinePaths: [Clip]
     
-    init(name: String, videoPaths: [URL] = []) {
+    init(name: String, videoPaths: [Clip] = []) {
         self.id = UUID()
         self.name = name
         self.createdAt = Date()
@@ -91,12 +92,12 @@ struct Session: Identifiable, Codable, Equatable, Hashable {
         id = try container.decode(UUID.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
-        videoPaths = try container.decode([URL].self, forKey: .videoPaths)
-        timelinePaths = try container.decodeIfPresent([TimelineClip].self, forKey: .timelinePaths) ?? []
+        videoPaths = try container.decodeIfPresent([Clip].self, forKey: .videoPaths) ?? []
+        timelinePaths = try container.decodeIfPresent([Clip].self, forKey: .timelinePaths) ?? []
     }
 }
 
-struct TimelineClip: Identifiable, Codable, Equatable, Hashable {
+struct Clip: Identifiable, Codable, Equatable, Hashable {
     let id: UUID
     let url: URL
     

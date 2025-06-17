@@ -14,11 +14,34 @@ struct MediaTimelineView: View {
     @Binding var session: Session
     
     var body: some View {
-        VStack {
-            timelineView
+        GeometryReader { geo in
+            VStack {
+                startSessionPreview
+                    .padding(.top, 3)
+                
+                timelineView
+                    .frame(width: geo.size.width)
+                    .position(x: geo.size.width / 2, y: geo.size.height / 2)
+            }
         }
     }
-
+    
+    var startSessionPreview: some View {
+        HStack {
+            Spacer()
+            
+            Button(action: {}) {
+                Image(systemName: "play.circle.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(.accentColor)
+                    .padding()
+            }
+            .buttonStyle(.plain)
+            
+            Spacer()
+        }
+    }
+    
     var timelineView: some View {
         ScrollView(.horizontal) {
             LazyHStack {
@@ -57,7 +80,7 @@ struct MediaTimelineView: View {
         }
     }
     
-    private func timelineBox(for clip: TimelineClip) -> some View {
+    private func timelineBox(for clip: Clip) -> some View {
         VStack(spacing: 4) {
             // Fake visual "clip"
             RoundedRectangle(cornerRadius: 6)
