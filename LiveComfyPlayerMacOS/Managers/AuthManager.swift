@@ -21,7 +21,7 @@ final class AuthManager : ObservableObject {
     
     init() {
         getUserAuthState()
-    }    
+    }
 }
 
 extension AuthManager {
@@ -61,17 +61,20 @@ extension AuthManager {
                 DispatchQueue.main.async {
                     switch state {
                     case .revoked, .notFound:
+                        print("user is not signed in")
                         self.isUserSignedIn = false
                     case .authorized, .transferred:
+                        print("user is signed in")
                         self.isUserSignedIn = true
                     @unknown default:
+                        print("Unknown state: \(state)")
                         self.isUserSignedIn = false
                     }
                 }
             }
-            
         } else {
             DispatchQueue.main.async {
+                print("No user credentials found in UserDefaults")
                 self.isUserSignedIn = false
             }
         }
@@ -96,9 +99,15 @@ extension AuthManager {
         defaults.set(credential.user, forKey: "appleUserID")
         if let name = credential.fullName?.formatted() {
             defaults.set(name, forKey: "appleUserFullName")
+        } else {
+            defaults.set("Unknown", forKey: "appleUserFullName")
         }
         if let email = credential.email {
             defaults.set(email, forKey: "appleUserEmail")
+        } else {
+            defaults.set("Unavailable", forKey: "appleUserEmail")
         }
+        
+        print("Saved user credentials: \(credential.user)")
     }
 }

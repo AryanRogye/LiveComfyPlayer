@@ -37,6 +37,17 @@ final class SessionManager: ObservableObject {
         saveSessions()
     }
     
+    func addVideoToTimeline(_ path: URL, for session: Session) {
+        /// Find the index that holds the session
+        guard let index = sessions.firstIndex(where: { $0.id == session.id }) else { return }
+        /// Then add it to the timelinePaths
+        let clip = TimelineClip(url: path)
+        /// Create a new TimelineClip and append it
+        sessions[index].timelinePaths.append(clip)
+        /// Save it
+        saveSessions()
+    }
+    
     private func saveSessions() {
         do {
             let data = try JSONEncoder().encode(sessions)
@@ -61,7 +72,7 @@ struct Session: Identifiable, Codable, Equatable, Hashable {
     var name: String
     var createdAt: Date
     var videoPaths: [URL]
-    var timelinePaths: [URL]
+    var timelinePaths: [TimelineClip]
     
     init(name: String, videoPaths: [URL] = []) {
         self.id = UUID()
@@ -71,12 +82,26 @@ struct Session: Identifiable, Codable, Equatable, Hashable {
         self.timelinePaths = []
     }
     
+    enum CodingKeys: String, CodingKey {
+        case id, name, createdAt, videoPaths, timelinePaths
+    }
+    
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(UUID.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         videoPaths = try container.decode([URL].self, forKey: .videoPaths)
-        timelinePaths = try container.decodeIfPresent([URL].self, forKey: .timelinePaths) ?? []
+        timelinePaths = try container.decodeIfPresent([TimelineClip].self, forKey: .timelinePaths) ?? []
+    }
+}
+
+struct TimelineClip: Identifiable, Codable, Equatable, Hashable {
+    let id: UUID
+    let url: URL
+    
+    init(url: URL) {
+        self.id = UUID()
+        self.url = url
     }
 }

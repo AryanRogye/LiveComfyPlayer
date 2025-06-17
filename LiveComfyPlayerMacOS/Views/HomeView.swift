@@ -66,6 +66,8 @@ struct HomeView: View {
                         .frame(maxWidth: 200)
                 }
                 
+                Spacer()
+                
                 HStack {
                     Spacer()
                     

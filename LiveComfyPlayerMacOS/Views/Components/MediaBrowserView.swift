@@ -106,21 +106,27 @@ struct MediaBrowserView: View {
                     importMediaView(width: 60, height: 60, paddingTop: 10)
                     
                     ForEach(session.videoPaths, id: \.self) { video in
-                        if let thumbnail = thumbnails[video] {
-                            Image(nsImage: thumbnail)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: itemSize, height: itemSize)
-                                .clipped()
-                                .cornerRadius(8)
-                        } else {
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(width: itemSize, height: itemSize)
-                                .overlay(
-                                    ProgressView()
-                                        .progressViewStyle(CircularProgressViewStyle())
-                                )
+                        ZStack {
+                            if let thumbnail = thumbnails[video] {
+                                Image(nsImage: thumbnail)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: itemSize, height: itemSize)
+                                    .clipped()
+                                    .cornerRadius(8)
+                            } else {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.gray.opacity(0.3))
+                                    .frame(width: itemSize, height: itemSize)
+                                    .overlay(
+                                        ProgressView()
+                                            .progressViewStyle(CircularProgressViewStyle())
+                                    )
+                            }
+                        }
+                        .onDrag {
+                            let provider = NSItemProvider(object: video as NSURL)
+                            return provider
                         }
                     }
                 }
@@ -176,7 +182,7 @@ struct MediaBrowserView: View {
     // MARK: - Video Preview
     private var videoPreviewVideo: some View {
         VStack {
-            Text("hello")
+            Text("")
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color.blue.opacity(0.2))
         }
