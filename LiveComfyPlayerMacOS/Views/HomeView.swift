@@ -118,7 +118,6 @@ struct HomeView: View {
         }
     }
     
-    #if os(macOS)
     private var roomsListView: some View {
         ScrollView {
             ForEach(sessionManager.sessions.indices, id: \.self) { index in
@@ -154,39 +153,6 @@ struct HomeView: View {
             }
         }
     }
-    #elseif os(iOS)
-    private var roomsListView: some View {
-        ScrollView {
-            VStack(spacing: 8) {
-                ForEach(sessionManager.sessions.indices, id: \.self) { index in
-                    let session = sessionManager.sessions[index]
-                    Button(action: {
-                        navigationManager.activeSessionID = session.id
-                    }) {
-                        sessionRow(session)
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(
-                                        session.id == navigationManager.activeSessionID
-                                        ? Color.accentColor.opacity(0.1)
-                                        : Color(UIColor.secondarySystemBackground)
-                                    )
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color(UIColor.separator), lineWidth: 0.5)
-                            )
-                            .cornerRadius(12)
-                            .padding(.horizontal, 12)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-            .padding(.top)
-        }
-    }
-    #endif
     
     // session row
     private func sessionRow(_ session: Session) -> some View {

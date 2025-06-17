@@ -9,10 +9,13 @@ import SwiftUI
 import AVFoundation
 
 struct MediaBrowserView: View {
-    
     @Binding var session: Session
+    
     @ObservedObject private var sessionManager: SessionManager = .shared
+    
     @State private var leftWidth: CGFloat = 300
+    @State private var isImporterPresented = false
+    @State private var thumbnails: [URL: NSImage] = [:]
     
     var body: some View {
         GeometryReader { geometry in
@@ -20,7 +23,7 @@ struct MediaBrowserView: View {
                 addVideoVideo
                     .frame(width: leftWidth)
                 
-                draggableDivider(geometry: geometry)
+                draggableDivider(geometry: geometry, minLimit: 300, maxLimit: geometry.size.width - 100)
                 
                 videoPreviewVideo
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -29,21 +32,36 @@ struct MediaBrowserView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
-    private func draggableDivider(geometry: GeometryProxy) -> some View {
+    
+    private func draggableDivider(geometry: GeometryProxy,
+                                  minLimit: CGFloat? = nil,
+                                  maxLimit: CGFloat? = nil) -> some View {
         Rectangle()
             .fill(Color.gray.opacity(0.4))
             .frame(width: 2)
             .gesture(
                 DragGesture(minimumDistance: 5)
                     .onChanged { value in
-                        let newWidth = leftWidth + value.translation.width
-                        if newWidth > 100 && newWidth < geometry.size.width - 100 {
-                            leftWidth = newWidth
+                        /// Get the new Width
+                        var newWidth = leftWidth + value.translation.width
+                        
+                        /// Apply Limits if present
+                        /// Min limit
+                        if let minLimit = minLimit {
+                            newWidth = max(newWidth, minLimit)
+                        } else {
+                            newWidth = max(newWidth, 100)
                         }
+                        /// Max Limit
+                        if let maxLimit = maxLimit {
+                            newWidth = min(newWidth, maxLimit)
+                        } else {
+                            newWidth = min(newWidth, geometry.size.width - 100)
+                        }
+                        leftWidth = newWidth
                     }
             )
             .background(Color.clear)
-#if os(macOS)
             .onHover { hovering in
                 if hovering {
                     NSCursor.resizeLeftRight.push()
@@ -51,23 +69,14 @@ struct MediaBrowserView: View {
                     NSCursor.pop()
                 }
             }
-#elseif os(iOS)
-            .hoverEffect(.highlight) // Optional for iPadOS mouse hover
-#endif
     }
     
     // MARK: - Add Video
-    @State private var isImporterPresented = false
-    #if os(macOS)
-    @State private var thumbnails: [URL: NSImage] = [:]
-    #elseif os(iOS)
-    @State private var thumbnails: [URL: UIImage] = [:]
-    #endif
     
     private var addVideoVideo: some View {
         VStack {
             if session.videoPaths.isEmpty {
-                importMediaView
+                importMediaView()
             } else {
                 importedMediaView
             }
@@ -83,45 +92,44 @@ struct MediaBrowserView: View {
     }
     
     private var importedMediaView: some View {
-        VStack {
-            let columns = [
-                GridItem(.flexible(minimum: 100)),
-                GridItem(.flexible(minimum: 100))
-            ]
-            LazyVGrid(columns: columns) {
-                ForEach(session.videoPaths, id: \.self) { video in
-                    if let thumbnail = thumbnails[video] {
-                        #if os(iOS)
-                        Image(uiImage: thumbnail)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 100, height: 100)
-                            .clipped()
-                            .cornerRadius(8)
-                        #elseif os(macOS)
-                        Image(nsImage: thumbnail)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 100, height: 100)
-                            .clipped()
-                            .cornerRadius(8)
-                        #endif
-                    } else {
-                        // Show placeholder while loading
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 100, height: 100)
-                            .overlay(
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle())
-                            )
+        GeometryReader { geometry in
+            let itemSize: CGFloat = 100
+            let spacing: CGFloat = 10
+            let columnsCount = max(Int((geometry.size.width + spacing) / (itemSize + spacing)), 1)
+            
+            let columns = Array(repeating: GridItem(.fixed(itemSize), spacing: spacing), count: columnsCount)
+            
+            
+            ScrollView {
+                LazyVGrid(columns: columns, alignment: .leading, spacing: spacing) {
+                    // Ensure the import button is there so u can always add something
+                    importMediaView(width: 60, height: 60, paddingTop: 10)
+                    
+                    ForEach(session.videoPaths, id: \.self) { video in
+                        if let thumbnail = thumbnails[video] {
+                            Image(nsImage: thumbnail)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: itemSize, height: itemSize)
+                                .clipped()
+                                .cornerRadius(8)
+                        } else {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(width: itemSize, height: itemSize)
+                                .overlay(
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle())
+                                )
+                        }
                     }
                 }
+                .padding(.horizontal, spacing)
             }
         }
     }
     
-    private var importMediaView: some View {
+    private func importMediaView(width: CGFloat = 15, height: CGFloat = 15, paddingTop: CGFloat = 0) -> some View {
         Button(action: {
             isImporterPresented = true
         }) {
@@ -129,7 +137,7 @@ struct MediaBrowserView: View {
                 VStack {
                     Image(systemName: "arrow.down")
                         .resizable()
-                        .frame(width: 15, height: 15)
+                        .frame(width: width, height: height)
                         .foregroundStyle(.primary)
                 }
                 .padding()
@@ -162,6 +170,7 @@ struct MediaBrowserView: View {
                 print("Error selecting file: \(error.localizedDescription)")
             }
         }
+        .padding(.top, paddingTop)
     }
     
     // MARK: - Video Preview
@@ -185,7 +194,6 @@ struct MediaBrowserView: View {
         }
     }
     
-    #if os(macOS)
     private func generateThumbnail(for url: URL) async -> NSImage {
         return await withCheckedContinuation { continuation in
             let asset = AVURLAsset(url: url)
@@ -217,37 +225,4 @@ struct MediaBrowserView: View {
             }
         }
     }
-    #elseif os(iOS)
-    private func generateThumbnail(for url: URL) async -> UIImage {
-        return await withCheckedContinuation { continuation in
-            let asset = AVURLAsset(url: url)
-            let generator = AVAssetImageGenerator(asset: asset)
-            generator.appliesPreferredTrackTransform = true
-            generator.maximumSize = CGSize(width: 300, height: 300)
-            generator.requestedTimeToleranceBefore = .zero
-            generator.requestedTimeToleranceAfter = .zero
-            
-            let time = CMTime(seconds: 0.1, preferredTimescale: 600)
-            
-            generator.generateCGImagesAsynchronously(forTimes: [NSValue(time: time)]) { _, cgImage, _, result, error in
-                if let error = error {
-                    print("❌ Thumbnail generation failed for \(url.lastPathComponent): \(error.localizedDescription)")
-                    let fallbackImage = UIImage(systemName: "questionmark.square.dashed")
-                    ?? UIImage()
-                    continuation.resume(returning: fallbackImage)
-                    return
-                }
-                
-                if let cgImage = cgImage {
-                    let uiImage = UIImage(cgImage: cgImage)
-                    continuation.resume(returning: uiImage)
-                } else {
-                    let fallbackImage = UIImage(systemName: "questionmark.square.dashed")
-                    ?? UIImage()
-                    continuation.resume(returning: fallbackImage)
-                }
-            }
-        }
-    }
-    #endif
 }

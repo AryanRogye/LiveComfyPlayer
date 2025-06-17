@@ -103,7 +103,6 @@ struct SessionView: View {
                     }
             )
             .background(Color.clear)
-#if os(macOS)
             .onHover { hovering in
                 if hovering {
                     NSCursor.resizeUpDown.push()
@@ -111,9 +110,6 @@ struct SessionView: View {
                     NSCursor.pop()
                 }
             }
-#elseif os(iOS)
-            .hoverEffect(.highlight) // Optional subtle feedback on iPad with trackpad
-#endif
     }
     
     // MARK: - Title
@@ -140,13 +136,8 @@ struct SessionView: View {
         .padding(.horizontal)
     }
     
-#if os(macOS)
     let backgroundColor = Color(NSColor.controlBackgroundColor)
     let borderColor = Color(NSColor.separatorColor)
-#else
-    let backgroundColor = Color(UIColor.systemBackground)
-    let borderColor = Color(UIColor.separator)
-#endif
     
     // MARK: - Verified Users
     private var verifiedUsersDropdown: some View {

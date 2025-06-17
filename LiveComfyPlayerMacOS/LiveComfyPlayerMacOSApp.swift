@@ -12,7 +12,6 @@ struct LiveComfyPlayerMacOSApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
-        #if os(macOS)
         WindowGroup {
             ContentView()
         }
@@ -22,15 +21,5 @@ struct LiveComfyPlayerMacOSApp: App {
                 MultiPeerManager.shared.stop()
             }
         }
-        #elseif os(iOS)
-        WindowGroup {
-            ContentView()
-        }
-        .onChange(of: scenePhase) { _, newPhase in
-            if newPhase == .background {
-                MultiPeerManager.shared.stop()
-            }
-        }
-        #endif
     }
 }
