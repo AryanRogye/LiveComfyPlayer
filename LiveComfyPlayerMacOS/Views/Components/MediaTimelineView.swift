@@ -9,23 +9,46 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct MediaTimelineView: View {
+    @Binding var session: Session
+    @Binding var topHeight: CGFloat
     
     @State private var isHovering: Bool = false
     @ObservedObject private var sessionManager: SessionManager = .shared
-    @Binding var session: Session
+    
+    @State private var hoverX: CGFloat = 0
     
     var body: some View {
         GeometryReader { geo in
-            VStack {
-                startSessionPreview
-                    .padding(.top, 3)
-                
-                timelineView
-                    .frame(width: geo.size.width)
-                    .position(x: geo.size.width / 2, y: geo.size.height / 2)
+            ZStack {
+                VStack {
+                    startSessionPreview
+                        .padding(.top, 3)
+                    
+                    timelineView
+                        .frame(width: geo.size.width)
+                        .position(x: geo.size.width / 2, y: geo.size.height / 2)
+                }
             }
+            .background(Color(NSColor.controlBackgroundColor))
+            
+            HoverTrackingView { x in
+                hoverX = x
+            }
+            
+            showHoverIndicator(geometry: geo)
         }
-        .background(Color(NSColor.controlBackgroundColor))
+    }
+    
+    func showHoverIndicator(geometry: GeometryProxy) -> some View {
+        Rectangle()
+            .fill(Color.accentColor.opacity(isHovering ? 0.5 : 0))
+            .frame(width: 2)
+            .frame(maxHeight: .infinity)
+            .position(x: hoverX, y: geometry.size.height - topHeight)
+            .animation(.easeInOut, value: isHovering)
+            .onHover { hovering in
+                isHovering = hovering
+            }
     }
     
     var startSessionPreview: some View {
@@ -116,5 +139,40 @@ struct MediaTimelineView: View {
     
     private func handleTimelineDrop(of url: URL) {
         sessionManager.addVideoToTimeline(url, for: session)
+    }
+}
+
+
+struct HoverTrackingView: NSViewRepresentable {
+    var onUpdate: (CGFloat) -> Void
+    
+    func makeNSView(context: Context) -> NSView {
+        let view = TrackingNSView()
+        view.onUpdate = onUpdate
+        return view
+    }
+    
+    func updateNSView(_ nsView: NSView, context: Context) {}
+    
+    class TrackingNSView: NSView {
+        var onUpdate: ((CGFloat) -> Void)?
+        
+        override func updateTrackingAreas() {
+            super.updateTrackingAreas()
+            trackingAreas.forEach(removeTrackingArea)
+            
+            let area = NSTrackingArea(
+                rect: bounds,
+                options: [.mouseMoved, .activeInKeyWindow, .inVisibleRect],
+                owner: self,
+                userInfo: nil
+            )
+            addTrackingArea(area)
+        }
+        
+        override func mouseMoved(with event: NSEvent) {
+            let location = convert(event.locationInWindow, from: nil)
+            onUpdate?(location.x)
+        }
     }
 }

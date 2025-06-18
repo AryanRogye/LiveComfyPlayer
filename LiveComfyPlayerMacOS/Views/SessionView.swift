@@ -32,7 +32,7 @@ struct SessionView: View {
                     
                     draggableDivider(geometry: geometry)
                     
-                    MediaTimelineView(session: $session)
+                    MediaTimelineView(session: $session, topHeight: $topHeight)
                         .frame(maxHeight: .infinity)
                 }
             }
