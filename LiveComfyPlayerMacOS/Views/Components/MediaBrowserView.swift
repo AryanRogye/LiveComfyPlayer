@@ -10,6 +10,7 @@ import AVKit
 
 struct MediaBrowserView: View {
     @Binding var session: Session
+    @Binding var topHeight: CGFloat
     
     @ObservedObject private var sessionManager: SessionManager = .shared
     
@@ -22,11 +23,13 @@ struct MediaBrowserView: View {
             HStack(spacing: 0) {
                 addVideoVideo
                     .frame(width: leftWidth)
+                    .background(.ultraThickMaterial)
                 
                 draggableDivider(geometry: geometry, minLimit: 300, maxLimit: geometry.size.width - 100)
                 
                 videoPreviewVideo(geometry: geometry)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(.ultraThickMaterial)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -195,7 +198,8 @@ struct MediaBrowserView: View {
     private func videoPreviewVideo(geometry: GeometryProxy) -> some View {
         VStack {
             VideoPlayer(player: sessionManager.player)
-                .frame(width: geometry.size.width - leftWidth, height: 300)
+            //                .frame(width: geometry.size.width - leftWidth, height: geometry.size.height - topHeight)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .cornerRadius(12)
         }
         .padding()

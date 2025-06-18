@@ -18,6 +18,8 @@ struct SessionView: View {
     @State private var showVerifiedUsers = false
     
     @State private var topHeight: CGFloat = 200
+    
+    let screenSize = NSScreen.main?.frame.size ?? .zero
 
     var body: some View {
         VStack(spacing: 0) {
@@ -25,7 +27,7 @@ struct SessionView: View {
             
             GeometryReader { geometry in
                 VStack(spacing: 0) {
-                    MediaBrowserView(session: $session)
+                    MediaBrowserView(session: $session, topHeight: $topHeight)
                         .frame(height: topHeight)
                     
                     draggableDivider(geometry: geometry)
@@ -35,7 +37,9 @@ struct SessionView: View {
                 }
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(minWidth:  screenSize.width  * 0.7, maxWidth:  .infinity,
+               minHeight: screenSize.height * 0.7, maxHeight: .infinity)
+        
         .onDisappear {
             /// Stop the MultiPeer session when the view disappears
             mpManager.stop()
