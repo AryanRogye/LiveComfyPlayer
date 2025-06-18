@@ -22,6 +22,7 @@ struct MediaBrowserView: View {
             HStack(spacing: 0) {
                 addVideoVideo
                     .frame(width: leftWidth)
+                    .frame(maxHeight: .infinity)
                     .background(.ultraThickMaterial)
                 
                 draggableDivider(geometry: geometry, minLimit: 150, maxLimit: geometry.size.width - 100)
