@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct MediaTimelineView: View {
     
@@ -60,7 +61,7 @@ struct MediaTimelineView: View {
         .cornerRadius(12)
         .onDrop(of: [.fileURL], isTargeted: $isHovering) { providers in
             for provider in providers {
-                provider.loadItem(forTypeIdentifier: kUTTypeFileURL as String, options: nil) { item, _ in
+                provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { item, _ in
                     if let data = item as? Data,
                        let url = NSURL(absoluteURLWithDataRepresentation: data, relativeTo: nil) as URL? {
                         DispatchQueue.main.async {
@@ -103,6 +104,13 @@ struct MediaTimelineView: View {
                 .foregroundColor(.gray)
         }
         .frame(width: 140)
+        .contextMenu {
+            Button(action: {
+                sessionManager.removeTimelineClip(clip, from: session)
+            }) {
+                Label("Remove Clip", systemImage: "trash")
+            }
+        }
     }
     
     private func handleTimelineDrop(of url: URL) {

@@ -36,7 +36,7 @@ struct HomeView: View {
         .navigationTitle("Home")
         .background(.ultraThinMaterial)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button(action: { showAddButton.toggle() }) {
                     /// Add Button
                     Image(systemName: !showAddButton ? "plus" : "minus")

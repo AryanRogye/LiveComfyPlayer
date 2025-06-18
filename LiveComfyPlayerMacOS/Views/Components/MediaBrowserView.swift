@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import AVFoundation
+import AVKit
 
 struct MediaBrowserView: View {
     @Binding var session: Session
@@ -25,7 +25,7 @@ struct MediaBrowserView: View {
                 
                 draggableDivider(geometry: geometry, minLimit: 300, maxLimit: geometry.size.width - 100)
                 
-                videoPreviewVideo
+                videoPreviewVideo(geometry: geometry)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
@@ -129,6 +129,17 @@ struct MediaBrowserView: View {
                             let provider = NSItemProvider(object: video as NSURL)
                             return provider
                         }
+                        .contextMenu {
+                            Button(action: {
+                                sessionManager.removeVideoFromSession(clip.url, from: session) { success in
+                                    if success {
+                                        thumbnails[video] = nil
+                                    }
+                                }
+                            }) {
+                                Label("Remove", systemImage: "trash")
+                            }
+                        }
                     }
                 }
                 .padding(.horizontal, spacing)
@@ -181,12 +192,13 @@ struct MediaBrowserView: View {
     }
     
     // MARK: - Video Preview
-    private var videoPreviewVideo: some View {
+    private func videoPreviewVideo(geometry: GeometryProxy) -> some View {
         VStack {
-            Text("")
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.blue.opacity(0.2))
+            VideoPlayer(player: sessionManager.player)
+                .frame(width: geometry.size.width - leftWidth, height: 300)
+                .cornerRadius(12)
         }
+        .padding()
     }
     
     // MARK: - Private API's

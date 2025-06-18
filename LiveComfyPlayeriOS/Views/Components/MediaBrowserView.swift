@@ -13,7 +13,7 @@ struct MediaBrowserView: View {
     
     @ObservedObject private var sessionManager: SessionManager = .shared
     
-    @State private var leftWidth: CGFloat = 100
+    @State private var leftWidth: CGFloat = 150
     @State private var isImporterPresented = false
     @State private var thumbnails: [URL: UIImage] = [:]
     
@@ -23,7 +23,7 @@ struct MediaBrowserView: View {
                 addVideoVideo
                     .frame(width: leftWidth)
                 
-                draggableDivider(geometry: geometry, minLimit: 100, maxLimit: geometry.size.width - 100)
+                draggableDivider(geometry: geometry, minLimit: 150, maxLimit: geometry.size.width - 100)
                 
                 videoPreviewVideo
                     .frame(maxWidth: .infinity, maxHeight: .infinity)

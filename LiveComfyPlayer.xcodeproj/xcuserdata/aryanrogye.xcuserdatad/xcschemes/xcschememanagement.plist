@@ -4,25 +4,45 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>LiveComfyPlayer.xcscheme_^#shared#^_</key>
+		<key>iOS_Debug.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
-		<key>LiveComfyPlayerMacOS.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>2</integer>
-		</dict>
-		<key>LiveComfyPlayeriOS.xcscheme_^#shared#^_</key>
+		<key>iOS_Release.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>macOS_Debug.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>macOS_Release.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>9B429DEB2DFD19A300CEE7D8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9B429DFF2DFD19C300CEE7D8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>9B429FCE2DFD54F500CEE7D8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9B70855A2E021C1F00D5A2EC</key>
 		<dict>
 			<key>primary</key>
 			<true/>
