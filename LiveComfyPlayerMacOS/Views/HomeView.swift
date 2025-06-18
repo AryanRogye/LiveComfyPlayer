@@ -10,10 +10,9 @@ import SwiftUI
 struct HomeView: View {
     // MARK: - Environment variables
     @Environment(\.colorScheme) private var colorScheme
-    
+    @EnvironmentObject private var sessionManager: SessionManager
     
     // MARK: -  Observed Objects
-    @ObservedObject private var sessionManager: SessionManager = .shared
     @ObservedObject private var navigationManager: NavigationManager = .shared
     
     // MARK: -  State variables

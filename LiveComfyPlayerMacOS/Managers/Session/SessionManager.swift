@@ -8,9 +8,8 @@
 import Cocoa
 import Combine
 
+@MainActor
 final class SessionManager: ObservableObject {
-    static let shared = SessionManager()
-    
     private let storageKey = "saved_sessions"
     
     @Published var sessions: [Session] = []
@@ -18,7 +17,7 @@ final class SessionManager: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     
-    private init() {
+    init() {
         loadSessions()
         observeTimelineChanges()
     }
@@ -165,9 +164,7 @@ extension SessionManager {
         }
         
         /// Composition is ready
-        Task { @MainActor in
-            let playerItem = AVPlayerItem(asset: composition)
-            self.player = AVPlayer(playerItem: playerItem)
-        }
+        let playerItem = AVPlayerItem(asset: composition)
+        self.player = AVPlayer(playerItem: playerItem)
     }
 }

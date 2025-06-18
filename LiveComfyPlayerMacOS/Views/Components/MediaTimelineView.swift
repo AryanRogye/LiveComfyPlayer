@@ -9,12 +9,12 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct MediaTimelineView: View {
+    
+    @EnvironmentObject private var sessionManager: SessionManager
     @Binding var session: Session
     @Binding var topHeight: CGFloat
     
     @State private var isHovering: Bool = false
-    @ObservedObject private var sessionManager: SessionManager = .shared
-    
     @State private var hoverX: CGFloat = 0
     
     var body: some View {

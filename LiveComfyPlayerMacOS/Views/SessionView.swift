@@ -9,6 +9,8 @@ import SwiftUI
 
 struct SessionView: View {
     
+    @EnvironmentObject private var sessionManager: SessionManager
+    
     @ObservedObject private var authManager: AuthManager = .shared
     @ObservedObject private var mpManager: MultiPeerManager = .shared
     @ObservedObject private var navigationManager = NavigationManager.shared
@@ -17,10 +19,14 @@ struct SessionView: View {
     @State private var beginMultiPeerSession: Bool = false
     @State private var showVerifiedUsers = false
     
-    @State private var topHeight: CGFloat = 200
+    @SceneState("topHeight") private var topHeight: CGFloat = 200
     
     let screenSize = NSScreen.main?.frame.size ?? .zero
-
+    
+    var isPreview: Bool {
+        ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             title
@@ -37,9 +43,12 @@ struct SessionView: View {
                 }
             }
         }
-        .frame(minWidth:  screenSize.width  * 0.7, maxWidth:  .infinity,
-               minHeight: screenSize.height * 0.7, maxHeight: .infinity)
-        
+        .frame(
+            minWidth: isPreview ? 500 : screenSize.width * 0.7,
+            maxWidth: .infinity,
+            minHeight: isPreview ? 500 : screenSize.height * 0.7,
+            maxHeight: .infinity
+        )
         .onDisappear {
             /// Stop the MultiPeer session when the view disappears
             mpManager.stop()
@@ -54,7 +63,6 @@ struct SessionView: View {
                 mpManager.clearRoomKey()
             }
         }
-        
         .toolbar {
             // MARK: - Room Key
             ToolbarItem(placement: .secondaryAction) {
@@ -92,6 +100,7 @@ struct SessionView: View {
             }
         }
     }
+    
     
     private func draggableDivider(geometry: GeometryProxy) -> some View {
         Rectangle()
@@ -132,10 +141,10 @@ struct SessionView: View {
                 verifiedUsersDropdown
                     .padding(.bottom, 2)
             }
-
+            
             Divider()
                 .padding(.horizontal, 8)
-
+            
         }
         .padding(.horizontal)
     }
@@ -186,4 +195,5 @@ struct SessionView: View {
 
 #Preview {
     SessionView(session: .constant(Session(name: "hello")))
+        .environmentObject(SessionManager())
 }

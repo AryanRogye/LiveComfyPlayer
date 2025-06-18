@@ -9,11 +9,11 @@ import SwiftUI
 import AVKit
 
 struct MediaBrowserView: View {
+    @EnvironmentObject private var sessionManager: SessionManager
+    
     @Binding var session: Session
     
-    @ObservedObject private var sessionManager: SessionManager = .shared
-    
-    @State private var leftWidth: CGFloat = 300
+    @SceneState("leftWidth") private var leftWidth: CGFloat = 300
     @State private var isImporterPresented = false
     @State private var thumbnails: [URL: NSImage] = [:]
     
