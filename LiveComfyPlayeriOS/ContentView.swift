@@ -19,7 +19,9 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             if let id = navigationManager.activeSessionID, let index = sessionManager.sessions.firstIndex(where: { $0.id == id }) {
-                SessionView(session: $sessionManager.sessions[index])
+                NavigationStack {
+                    SessionView(session: $sessionManager.sessions[index])
+                }
             } else {
                 TabView {
                     NavigationStack {

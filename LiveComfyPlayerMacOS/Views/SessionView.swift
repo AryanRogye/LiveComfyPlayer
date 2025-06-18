@@ -27,7 +27,7 @@ struct SessionView: View {
             
             GeometryReader { geometry in
                 VStack(spacing: 0) {
-                    MediaBrowserView(session: $session, topHeight: $topHeight)
+                    MediaBrowserView(session: $session)
                         .frame(height: topHeight)
                     
                     draggableDivider(geometry: geometry)

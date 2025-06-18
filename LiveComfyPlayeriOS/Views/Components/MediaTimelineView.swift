@@ -25,6 +25,7 @@ struct MediaTimelineView: View {
                     .position(x: geo.size.width / 2, y: geo.size.height / 2)
             }
         }
+        .background(Color(UIColor.systemBackground))
     }
     
     var startSessionPreview: some View {

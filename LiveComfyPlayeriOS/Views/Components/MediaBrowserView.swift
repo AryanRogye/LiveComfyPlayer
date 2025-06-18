@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import AVFoundation
+import AVKit
 
 struct MediaBrowserView: View {
     @Binding var session: Session
@@ -22,11 +22,13 @@ struct MediaBrowserView: View {
             HStack(spacing: 0) {
                 addVideoVideo
                     .frame(width: leftWidth)
+                    .background(.ultraThickMaterial)
                 
                 draggableDivider(geometry: geometry, minLimit: 150, maxLimit: geometry.size.width - 100)
                 
                 videoPreviewVideo
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(.ultraThickMaterial)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -157,9 +159,23 @@ struct MediaBrowserView: View {
             case .success(let urls):
                 for url in urls {
                     if url.startAccessingSecurityScopedResource() {
-                        sessionManager.addVideoPath(url, to: session)
-                        loadThumbnail(for: url) {
-                            url.stopAccessingSecurityScopedResource() // Stop access after thumbnail loads
+                        defer { url.stopAccessingSecurityScopedResource() }
+                        
+                        let destination = FileManager.default.temporaryDirectory.appendingPathComponent(url.lastPathComponent)
+                        
+                        do {
+                            if FileManager.default.fileExists(atPath: destination.path) {
+                                try FileManager.default.removeItem(at: destination)
+                            }
+                            try FileManager.default.copyItem(at: url, to: destination)
+                            
+                            sessionManager.addVideoPath(destination, to: session)
+                            
+                            loadThumbnail(for: destination) {
+                                // thumbnail loaded now
+                            }
+                        } catch {
+                            print("❌ Failed to copy file: \(error)")
                         }
                     }
                 }
@@ -173,10 +189,11 @@ struct MediaBrowserView: View {
     // MARK: - Video Preview
     private var videoPreviewVideo: some View {
         VStack {
-            Text("")
+            VideoPlayer(player: sessionManager.player)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.blue.opacity(0.2))
+                .cornerRadius(12)
         }
+        .padding()
     }
     
     // MARK: - Private API's
