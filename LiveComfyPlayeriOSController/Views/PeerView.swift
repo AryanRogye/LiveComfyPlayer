@@ -16,7 +16,7 @@ struct PeerView: View {
     
     @State private var key : String = ""
     @State private var isError: Bool = false
-    @State private var isConnected: Bool = false
+    @State private var isConnected: Bool = true
     
     @State private var couldntSend: Bool = false
     @State private var authenticationVerified: Bool = false
@@ -30,11 +30,6 @@ struct PeerView: View {
             
             openSession
             Spacer()
-        }
-        .onAppear {
-            mpManager.connect(to: peer) { success in
-                isConnected = success
-            }
         }
         .onChange(of: isError) { _, newValue in
             if newValue {

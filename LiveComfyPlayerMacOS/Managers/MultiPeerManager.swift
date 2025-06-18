@@ -18,6 +18,7 @@ struct PeerMessage: Codable {
 enum PeerMessageType: String, Codable {
     case roomKey
     case roomKeyResponse
+    case sessionUpdate
     case status
     case unknown
 }
@@ -43,6 +44,7 @@ final class MultiPeerManager: NSObject, ObservableObject {
     
     @Published public var roomKey: String?
     
+    public var userSession: Session? = nil
     
     public func start(session userSession: Session) {
         print("Called MultiPeerManager.start()")
@@ -79,9 +81,11 @@ final class MultiPeerManager: NSObject, ObservableObject {
         self.advertiser?.startAdvertisingPeer()
         
         print("MultiPeerManager started with peer: \(peerID.displayName)")
+        self.userSession = userSession
     }
     
     public func stop() {
+        self.userSession = nil
         session?.disconnect()
         advertiser?.stopAdvertisingPeer()
         advertiser = nil
@@ -97,8 +101,44 @@ final class MultiPeerManager: NSObject, ObservableObject {
         switch message.type {
         case .roomKey:          handleRoomKeyResponse(message.payload, from: peer)
         case .roomKeyResponse:  print("Received room key response from \(peer.displayName): \(message.payload)")
+        case .sessionUpdate:    print("Received Session Update from \(peer.displayName): \(message.payload)")
         case .status:           print("Received status from \(peer.displayName): \(message.payload)")
         case .unknown:          print("Received unknown message type from \(peer.displayName): \(message.payload)")
+        }
+    }
+    
+    public func updatePeersWithSession(_ userSession: Session) {
+        /// We Wanna Send ALL verified peers the new session update
+        guard let session = self.session else {
+            print("❌ No session available to update peers.")
+            return
+        }
+        
+        do {
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            /// Encode The Data
+            let sessionData = try encoder.encode(userSession)
+            /// Convert Data to String
+            let payloadString = String(data: sessionData, encoding: .utf8) ?? ""
+            
+            // Send the encoded session as a PeerMessage to all verified peers
+            let message = PeerMessage(type: .sessionUpdate, payload: payloadString)
+            let messageData = try encoder.encode(message)
+            
+            // Filter verified peers to those currently connected
+            let recipients = connectedPeers.filter { verifiedPeers.contains($0) }
+            
+            guard !recipients.isEmpty else {
+                print("⚠️ No verified peers connected.")
+                return
+            }
+            
+            try session.send(messageData, toPeers: recipients, with: .reliable)
+            print("📤 Sent session update to verified peers.")
+            
+        } catch {
+            print("Couldnt Encode The JSON Data: \(error.localizedDescription)")
         }
     }
     
@@ -120,6 +160,9 @@ final class MultiPeerManager: NSObject, ObservableObject {
             DispatchQueue.main.async {
                 if !self.verifiedPeers.contains(peer) {
                     self.verifiedPeers.append(peer)
+                    if let userSession = self.userSession {
+                        self.updatePeersWithSession(userSession)
+                    }
                     print("✅ Peer \(peer.displayName) verified with room key.")
                 }
             }

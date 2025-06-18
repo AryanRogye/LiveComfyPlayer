@@ -17,6 +17,13 @@ struct SessionView: View {
     
     @ObservedObject private var globalOverlayManager: GlobalOverlayManager = .shared
     @ObservedObject private var mpManager: MultiPeerManager = .shared
+    
+    private var session: Session? {
+        if let sesh = mpManager.macSession {
+            return sesh
+        }
+        return nil
+    }
 
     var body: some View {
         ZStack {
@@ -27,12 +34,35 @@ struct SessionView: View {
             VStack {
                 title
                 ScrollView {
-                    Text("Content Goes Here")
+                    sessionView
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+    
+    private var sessionView: some View {
+        VStack {
+            if let session = session {
+                Text("Video Paths")
+                ScrollView {
+                    ForEach(session.videoPaths) { video in
+                        Text("\(video.url)")
+                    }
+                }
+                
+                Divider()
+                    .padding()
+                
+                Text("Timeline Paths")
+                ScrollView {
+                    ForEach(session.timelinePaths) { video in
+                        Text("\(video.url)")
+                    }
+                }
+            }
         }
     }
     

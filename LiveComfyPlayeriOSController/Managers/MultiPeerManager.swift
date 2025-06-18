@@ -16,6 +16,7 @@ struct PeerMessage: Codable {
 enum PeerMessageType: String, Codable {
     case roomKey
     case roomKeyResponse
+    case sessionUpdate
     case status
     case unknown
 }
@@ -31,6 +32,8 @@ final class MultiPeerManager: NSObject, ObservableObject {
     @Published var discoveredPeers: [MCPeerID] = []
     @Published var connectedPeers: [MCPeerID] = []
     @Published var failedVerification: MCPeerID?
+    
+    @Published var macSession: Session? = nil
     
     private var pendingConnection: (peer: MCPeerID, completion: (Bool) -> Void)?
     private var keyResponseHandlers: [MCPeerID: (Bool) -> Void] = [:]
@@ -94,8 +97,33 @@ final class MultiPeerManager: NSObject, ObservableObject {
         switch message.type {
         case .roomKey:          print("Received room key from \(peer.displayName): \(message.payload)")
         case .roomKeyResponse:  handleRoomKeyResponse(message.payload, from: peer)
+        case .sessionUpdate:    handleSessionUpdateResponse(message.payload, from: peer)
         case .status:           print("Received status from \(peer.displayName): \(message.payload)")
         case .unknown:          print("Received unknown message type from \(peer.displayName): \(message.payload)")
+        }
+    }
+    
+    public func handleSessionUpdateResponse(_ response: String, from peer: MCPeerID) {
+        guard let responseData = response.data(using: .utf8) else {
+            print("❌ Failed to convert response string to Data")
+            return
+        }
+        
+        do {
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601  // Adjust based on Session properties
+            let session = try decoder.decode(Session.self, from: responseData)
+            
+            // Successfully decoded session object
+            print("✅ Decoded session from \(peer.displayName): \(session)")
+            
+            // TODO: Update your app state/UI with the new session information here.
+            DispatchQueue.main.async {
+                self.macSession = session
+            }
+            
+        } catch {
+            print("❌ Failed to decode session update: \(error.localizedDescription)")
         }
     }
     

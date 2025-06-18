@@ -8,13 +8,32 @@
 import SwiftUI
 import MultipeerConnectivity
 
+extension MCPeerID: Identifiable {
+    public var id: String { displayName }
+}
+
 struct DiscoveredPeerItem: View {
-    
     var peer: MCPeerID
     @Binding var isScanning: Bool
+    @Binding var selectedPeer: MCPeerID?
+
+    @State private var isConnecting: Bool = false
+    @State private var showConnectionError: Bool = false
+    
+    @ObservedObject var mpManager = MultiPeerManager.shared
     
     var body: some View {
-        NavigationLink(destination: PeerView(peer: peer, isScanning: $isScanning)) {
+        Button(action: {
+            isConnecting = true
+            mpManager.connect(to: peer) { success in
+                isConnecting = false
+                if success {
+                    selectedPeer = peer        // ← triggers navigation
+                } else {
+                    showConnectionError = true
+                }
+            }
+        }) {
             HStack {
                 Text(peer.displayName)
                     .font(.headline)
@@ -31,6 +50,10 @@ struct DiscoveredPeerItem: View {
             )
             .padding(.horizontal)
             .padding(.vertical, 5)
+        }
+        .buttonStyle(.plain)
+        .alert("Failed to connect to \(peer.displayName)", isPresented: $showConnectionError) {
+            Button("OK", role: .cancel) {}
         }
     }
 }

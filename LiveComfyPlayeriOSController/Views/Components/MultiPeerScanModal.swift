@@ -6,21 +6,29 @@
 //
 
 import SwiftUI
+import MultipeerConnectivity
 
 struct MultiPeerScanModal: View {
     
+    @State private var selectedPeer: MCPeerID?
     @Binding var isScanning: Bool
     @ObservedObject private var mpManager: MultiPeerManager = .shared
     
     var body: some View {
-        VStack {
-            ScrollView {
-                ForEach(mpManager.discoveredPeers, id: \.self) { peer in
-                    DiscoveredPeerItem(peer: peer, isScanning: $isScanning)
+        NavigationStack {
+            VStack {
+                ScrollView {
+                    ForEach(mpManager.discoveredPeers, id: \.self) { peer in
+                        DiscoveredPeerItem(peer: peer, isScanning: $isScanning, selectedPeer: $selectedPeer)
+                    }
                 }
+                Spacer()
+                closeButton
             }
-            Spacer()
-            closeButton
+            .navigationDestination(item: $selectedPeer) { peer in
+                PeerView(peer: peer, isScanning: $isScanning)
+            }
+            .navigationTitle("Discovered Peers")
         }
         .onAppear {
             mpManager.startBrowsing()

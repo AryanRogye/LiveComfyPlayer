@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		9B7085942E026C0600D5A2EC /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B7085932E026C0600D5A2EC /* AVKit.framework */; };
+		9B7E37612E03524D0040E3B5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7E37512E03524D0040E3B5 /* ContentView.swift */; };
+		9B7E37622E03524D0040E3B5 /* LiveComfyPlayerMacOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7E37522E03524D0040E3B5 /* LiveComfyPlayerMacOSApp.swift */; };
+		9B7E37632E03524D0040E3B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B7E37502E03524D0040E3B5 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -16,6 +19,9 @@
 		9B429FCF2DFD54F500CEE7D8 /* LiveComfyPlayeriOSController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LiveComfyPlayeriOSController.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B70855B2E021C1F00D5A2EC /* LiveComfyPlayeriOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LiveComfyPlayeriOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B7085932E026C0600D5A2EC /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
+		9B7E37502E03524D0040E3B5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9B7E37512E03524D0040E3B5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		9B7E37522E03524D0040E3B5 /* LiveComfyPlayerMacOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveComfyPlayerMacOSApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -29,11 +35,6 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		9B429E012DFD19C300CEE7D8 /* LiveComfyPlayerMacOS */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = LiveComfyPlayerMacOS;
-			sourceTree = "<group>";
-		};
 		9B70850C2E021A6400D5A2EC /* LiveComfyPlayeriOSController */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -45,6 +46,26 @@
 		9B70855C2E021C1F00D5A2EC /* LiveComfyPlayeriOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = LiveComfyPlayeriOS;
+			sourceTree = "<group>";
+		};
+		9B7E37652E0352560040E3B5 /* PropertyWrappers */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PropertyWrappers;
+			sourceTree = "<group>";
+		};
+		9B7E37682E0352560040E3B5 /* Config */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Config;
+			sourceTree = "<group>";
+		};
+		9B7E37702E0352560040E3B5 /* Managers */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		9B7E37802E0352560040E3B5 /* Views */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -86,7 +107,7 @@
 			isa = PBXGroup;
 			children = (
 				9B70850C2E021A6400D5A2EC /* LiveComfyPlayeriOSController */,
-				9B429E012DFD19C300CEE7D8 /* LiveComfyPlayerMacOS */,
+				9B7E37532E03524D0040E3B5 /* LiveComfyPlayerMacOS */,
 				9B70855C2E021C1F00D5A2EC /* LiveComfyPlayeriOS */,
 				9B7085922E026C0600D5A2EC /* Frameworks */,
 				9B429DED2DFD19A300CEE7D8 /* Products */,
@@ -110,6 +131,20 @@
 				9B7085932E026C0600D5A2EC /* AVKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9B7E37532E03524D0040E3B5 /* LiveComfyPlayerMacOS */ = {
+			isa = PBXGroup;
+			children = (
+				9B7E37682E0352560040E3B5 /* Config */,
+				9B7E37702E0352560040E3B5 /* Managers */,
+				9B7E37652E0352560040E3B5 /* PropertyWrappers */,
+				9B7E37802E0352560040E3B5 /* Views */,
+				9B7E37512E03524D0040E3B5 /* ContentView.swift */,
+				9B7E37522E03524D0040E3B5 /* LiveComfyPlayerMacOSApp.swift */,
+				9B7E37502E03524D0040E3B5 /* Assets.xcassets */,
+			);
+			path = LiveComfyPlayerMacOS;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -147,7 +182,9 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				9B429E012DFD19C300CEE7D8 /* LiveComfyPlayerMacOS */,
+				9B7E37652E0352560040E3B5 /* PropertyWrappers */,
+				9B7E37702E0352560040E3B5 /* Managers */,
+				9B7E37802E0352560040E3B5 /* Views */,
 			);
 			name = LiveComfyPlayerMacOS;
 			packageProductDependencies = (
@@ -258,6 +295,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B7E37632E03524D0040E3B5 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,6 +327,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B7E37612E03524D0040E3B5 /* ContentView.swift in Sources */,
+				9B7E37622E03524D0040E3B5 /* LiveComfyPlayerMacOSApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -516,7 +556,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = LiveComfyPlayerMacOS/LiveComfyPlayerMacOS.entitlements;
+				CODE_SIGN_ENTITLEMENTS = LiveComfyPlayerMacOS/Config/LiveComfyPlayerMacOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -604,7 +644,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_ENTITLEMENTS = LiveComfyPlayerMacOS/LiveComfyPlayerMacOS.entitlements;
+				CODE_SIGN_ENTITLEMENTS = LiveComfyPlayerMacOS/Config/LiveComfyPlayerMacOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;

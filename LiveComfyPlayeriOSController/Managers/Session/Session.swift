@@ -5,14 +5,14 @@
 //  Created by Aryan Rogye on 6/17/25.
 //
 
-import Cocoa
+import UIKit
 
 class Session: ObservableObject, Identifiable, Codable, Equatable, Hashable {
     let id: UUID
     
     var name: String
     var createdAt: Date
-    @Published var videoPaths: [Clip]
+    var videoPaths: [Clip]
     @Published var timelinePaths: [Clip] = []
     
     init(name: String, videoPaths: [Clip] = []) {

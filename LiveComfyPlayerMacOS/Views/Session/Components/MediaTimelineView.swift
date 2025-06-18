@@ -19,24 +19,16 @@ struct MediaTimelineView: View {
     
     var body: some View {
         GeometryReader { geo in
-            ZStack {
-                VStack {
-                    startSessionPreview
-                        .padding(.top, 3)
-                    
-                    timelineView
-                        .frame(width: geo.size.width)
-                        .position(x: geo.size.width / 2, y: geo.size.height / 2)
-                }
+            VStack {
+                startSessionPreview
+                    .padding(.top, 3)
+                
+                timelineView
+                    .frame(width: geo.size.width)
+                    .position(x: geo.size.width / 2, y: geo.size.height / 2)
             }
-            .background(Color(NSColor.controlBackgroundColor))
-            
-            HoverTrackingView { x in
-                hoverX = x
-            }
-            
-            showHoverIndicator(geometry: geo)
         }
+        .background(Color(NSColor.controlBackgroundColor))
     }
     
     func showHoverIndicator(geometry: GeometryProxy) -> some View {
@@ -128,6 +120,7 @@ struct MediaTimelineView: View {
                 .foregroundColor(.gray)
         }
         .frame(width: 140)
+        .contentShape(Rectangle())
         .contextMenu {
             Button(action: {
                 sessionManager.removeTimelineClip(clip, from: session)

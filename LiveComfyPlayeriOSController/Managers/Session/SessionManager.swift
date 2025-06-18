@@ -5,8 +5,9 @@
 //  Created by Aryan Rogye on 6/14/25.
 //
 
-import Cocoa
+import UIKit
 import Combine
+import AVKit
 
 @MainActor
 final class SessionManager: ObservableObject {
@@ -16,36 +17,26 @@ final class SessionManager: ObservableObject {
     @Published var player: AVPlayer = AVPlayer()
     
     internal var mpManager = MultiPeerManager.shared
-    
+
     private var cancellables = Set<AnyCancellable>()
     
     init() {
-        loadSessions()
-        observeTimelineChanges()
+//        loadSessions()
+//        observeTimelineChanges()
     }
-    
-    internal var isUpdatingPeers: Bool = false
     
     private func observeTimelineChanges() {
         cancellables.removeAll()
-        sessions.forEach { observe($0) }
-    }
-    
-    private func observe(_ session: Session) {
-        session.$timelinePaths
-            .sink { [weak self] newPaths in
-                Task {
-                    await self?.processTimelinePaths(for: session, timeline: newPaths)
-                }
-                self?.updatePeers(for: session)
-            }
-            .store(in: &cancellables)
-        
-        session.$videoPaths
-            .sink { [weak self] _ in
-                self?.updatePeers(for: session)
-            }
-            .store(in: &cancellables)
+//        sessions.forEach { session in
+//            session.$timelinePaths
+//                .sink { [weak self] newPaths in
+////                    Task {
+//////                        await self?.processTimelinePaths(for: session, timeline: newPaths)
+////                    }
+////                    self?.updatePeers(for: session)
+//                }
+//                .store(in: &cancellables)
+//        }
     }
     
     func addSession(_ session: Session) {
@@ -131,67 +122,10 @@ final class SessionManager: ObservableObject {
     
 }
 
-extension SessionManager {
-    internal func updatePeers(for session: Session) {
-        if isUpdatingPeers { return }
-        isUpdatingPeers = true
-        defer { isUpdatingPeers = false }
-        
-        if let mpSession = mpManager.userSession, session.id == mpSession.id {
-            mpManager.updatePeersWithSession(session)
-        } else {
-            print("❌ Session ID mismatch with MultiPeerManager.")
-        }
-    }
-}
-
-import AVFoundation
-import AVKit
-
-extension SessionManager {
-    internal func processTimelinePaths(for session: Session, timeline: [Clip]) async {
-        
-        /// Get All The AVURLAssets from the timeline clips
-        let assets : [AVURLAsset] = timeline.map { clip in
-            AVURLAsset(url: clip.url)
-        }
-        
-        /// Intialize an AVMutableComposition
-        let composition = AVMutableComposition()
-        
-        guard let track = composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid) else {
-            print("❌ Failed to add video track to composition.")
-            return
-        }
-        guard let audio = composition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid) else {
-            print("❌ Failed to add audio track to composition.")
-            return
-        }
-        
-        // Get currentTime for all the video clips
-        var currentTime: CMTime = .zero
-        for asset in assets {
-            do {
-                guard let assetTrack = try await asset.loadTracks(withMediaType: .video).first else {
-                    continue
-                }
-                
-                let timeRange = try await CMTimeRange(start: .zero, duration: asset.load(.duration))
-                
-                try track.insertTimeRange(timeRange, of: assetTrack, at: currentTime)
-                if let audioTrack = try await asset.loadTracks(withMediaType: .audio).first {
-                    try audio.insertTimeRange(timeRange, of: audioTrack, at: currentTime)
-                }
-                
-                currentTime = try await currentTime + asset.load(.duration)
-            } catch {
-                print("❌ Failed to process asset \(asset.url): \(error.localizedDescription)")
-                continue
-            }
-        }
-        
-        /// Composition is ready
-        let playerItem = AVPlayerItem(asset: composition)
-        self.player = AVPlayer(playerItem: playerItem)
-    }
-}
+//extension SessionManager {
+//    internal func updatePeers(for session: Session) {
+//        if let mpSession = mpManager.userSession, session.id == mpSession.id {
+//            mpManager.updatePeersWithSession(session)
+//        }
+//    }
+//}
